@@ -24,18 +24,6 @@ class Game {
     String name = stdin.readLineSync() as String;
     return name;
   }
-
-  Future<void> loadCharacterStatsAsync() async {
-    try {
-      final file = File('characters.txt');
-      final contents = await file.readAsString();
-      final stats = contents.split(',');
-
-      // 파일 내용 처리...
-    } catch (e) {
-      print('캐릭터 데이터를 불러오는 데 실패했습니다: $e');
-    }
-  }
 }
 
 
