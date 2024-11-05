@@ -1,6 +1,4 @@
 import 'dart:io';
-
-import 'package:dart_rpg/class/character.dart';
 import 'package:dart_rpg/class/monster.dart';
 
 Future<List<Monster>?> loadMonsterListAsync() async {
