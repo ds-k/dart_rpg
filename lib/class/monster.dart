@@ -6,7 +6,7 @@ class Monster {
   int attack;
   int defense = 0;
 
-  Monster(this.name, this.hp, this.attack, this.defense);
+  Monster(this.name, this.hp, this.attack);
 
   void attackCharacter(Character character) {
     print("attack character!");
