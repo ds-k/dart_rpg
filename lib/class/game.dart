@@ -1,22 +1,47 @@
+import 'dart:math';
+
 import 'package:dart_rpg/class/character.dart';
 import 'package:dart_rpg/class/monster.dart';
 import 'dart:io';
+
+import 'package:dart_rpg/helper/load_character_stats.dart';
+import 'package:dart_rpg/helper/load_monster_list.dart';
 
 class Game {
   Character? character;
   List<Monster>? monsterList;
   int? monsterKillCount;
 
-  Game(this.character, this.monsterList, this.monsterKillCount);
+  Future<void> startGame() async {
+    try {
+      String name = getCharacterName();
+      character = await loadCharacterStatsAsync(name);
 
-  void startGame() {}
+      if (character == null) {
+        throw Exception("캐릭터를 찾을 수 없습니다.");
+      }
+      print("\n게임을 시작합니다!");
+      print(
+          "${character?.name} - 체력: ${character?.hp}, 공격력: ${character?.attack}, 방어력: ${character?.defense}");
+    } catch (e) {
+      print(e.toString().substring(11));
+    }
+  }
 
   void battle() {
     print("battle!");
   }
 
-  void getRandomMonster() {
-    print("랜덤으로 몬스터를 불러온다.");
+  Future<void> getRandomMonster() async {
+    monsterList = await loadMonsterListAsync();
+    Random random = Random();
+    int randomIdx = random.nextInt(monsterList!.length);
+
+    Monster randomMonster = monsterList![randomIdx];
+
+    print("\n새로운 몬스터가 나타났습니다!");
+    print(
+        "${randomMonster.name} - 체력: ${randomMonster.hp}, 공격력: ${randomMonster.attack}");
   }
 
   String getCharacterName() {
