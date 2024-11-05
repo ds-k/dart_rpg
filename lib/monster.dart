@@ -4,16 +4,16 @@ class Monster {
   String name;
   int hp;
   int attack;
-  int defence = 0;
+  int defense = 0;
 
-  Monster(this.name, this.hp, this.attack, this.defence);
+  Monster(this.name, this.hp, this.attack, this.defense);
 
   void attackCharacter(Character character) {
     print("attack character!");
   }
 
   void showStatus() {
-    print("몬스터의 현재 체력은 $hp, 공격력 $attack, 방어력 $defence");
+    print("몬스터의 현재 체력은 $hp, 공격력 $attack, 방어력 $defense");
   }
 }
 

@@ -4,9 +4,9 @@ class Character {
   String name;
   int hp;
   int attack;
-  int defence;
+  int defense;
 
-  Character(this.name, this.hp, this.attack, this.defence);
+  Character(this.name, this.hp, this.attack, this.defense);
 
   void attackMonster(Monster monster) {
     print("attack monster!");
@@ -17,7 +17,7 @@ class Character {
   }
 
   void showStatus() {
-    print("캐릭터의 현재 체력은 $hp, 공격력 $attack, 방어력 $defence");
+    print("캐릭터의 현재 체력은 $hp, 공격력 $attack, 방어력 $defense");
   }
 }
 
