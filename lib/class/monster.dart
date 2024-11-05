@@ -1,4 +1,4 @@
-import 'package:dart_rpg/character.dart';
+import 'package:dart_rpg/class/character.dart';
 
 class Monster {
   String name;

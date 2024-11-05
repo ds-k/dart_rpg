@@ -1,16 +1,15 @@
-import 'package:dart_rpg/character.dart';
-import 'package:dart_rpg/monster.dart';
+import 'package:dart_rpg/class/character.dart';
+import 'package:dart_rpg/class/monster.dart';
+import 'dart:io';
 
 class Game {
-  Character character;
-  List<Monster> monsterList;
-  int monsterKillCount;
+  Character? character;
+  List<Monster>? monsterList;
+  int? monsterKillCount;
 
   Game(this.character, this.monsterList, this.monsterKillCount);
 
-  void startGame() {
-    print("Game start!");
-  }
+  void startGame() {}
 
   void battle() {
     print("battle!");
@@ -18,6 +17,24 @@ class Game {
 
   void getRandomMonster() {
     print("랜덤으로 몬스터를 불러온다.");
+  }
+
+  String getCharacterName() {
+    print("캐릭터의 이름을 입력하세요 : ");
+    String name = stdin.readLineSync() as String;
+    return name;
+  }
+
+  Future<void> loadCharacterStatsAsync() async {
+    try {
+      final file = File('characters.txt');
+      final contents = await file.readAsString();
+      final stats = contents.split(',');
+
+      // 파일 내용 처리...
+    } catch (e) {
+      print('캐릭터 데이터를 불러오는 데 실패했습니다: $e');
+    }
   }
 }
 
