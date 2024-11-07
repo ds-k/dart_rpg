@@ -49,16 +49,16 @@ class Game {
     while (character!.hp > 0) {
       // 캐릭터의 턴
       print("\n${character!.name}의 턴");
-      print("행동을 선택하세요 (1: 공격, 2: 방어)");
+      print("행동을 선택하세요 (1: 공격, 2: 방어, 3: 공격력 2배 스킬)");
 
       try {
         switch (stdin.readLineSync() as String) {
           case "1":
-            character!.attackMonster(randomMonster);
+            character?.attackMonster(randomMonster);
             // 몬스터가 죽은 경우
             if (randomMonster.hp <= 0) {
               print("${randomMonster.name}을 물리쳤습니다!");
-              monsterList!.remove(randomMonster);
+              monsterList?.remove(randomMonster);
               monsterKillCount += 1;
               if (monsterList!.isEmpty) {
                 print("축하합니다! 모든 몬스터를 물리쳤습니다.");
@@ -81,8 +81,40 @@ class Game {
               }
             }
           case "2":
-            character!.defend(randomMonster);
+            character?.defend(randomMonster);
             break;
+          case "3":
+            character?.useSkill();
+
+            if (character?.skillFlag == 1) {
+              character?.attackMonster(randomMonster);
+            }
+            // 몬스터가 죽은 경우
+            if (randomMonster.hp <= 0) {
+              print("${randomMonster.name}을 물리쳤습니다!");
+              monsterList?.remove(randomMonster);
+              monsterKillCount += 1;
+              if (monsterList!.isEmpty) {
+                print("축하합니다! 모든 몬스터를 물리쳤습니다.");
+                checkSave(character!, true);
+                return;
+              }
+
+              print("\n다음 몬스터와 싸우시겠습니까? (y/n)");
+              switch (stdin.readLineSync() as String) {
+                case "y":
+                case "Y":
+                  battle();
+                  return;
+                case "n":
+                case "N":
+                  print("게임을 종료합니다. 도중에 종료한 게임은 저장되지 않습니다.");
+                  return;
+                default:
+                  throw Exception("잘못된 선택입니다. 게임을 다시 시작해 주세요.");
+              }
+            }
+            continue;
           default:
             throw Exception("잘못된 선택입니다. 게임을 다시 시작해 주세요.");
         }
@@ -96,7 +128,7 @@ class Game {
 
       // 캐릭터가 죽지 않았을 경우 진행을 위해 캐릭터와 몬스터의 상태 노출
       if (character!.hp > 0) {
-        character!.showStatus();
+        character?.showStatus();
         randomMonster.showStatus();
       }
     }
