@@ -8,10 +8,11 @@ Future<List<Monster>?> loadMonsterListAsync() async {
     List<Monster> monsters = [];
     for (String line in lines) {
       List<dynamic> lineList = line.split(",");
+      if (lineList.length != 3) throw FormatException('Invalid monsters data');
       monsters.add(
           Monster(lineList[0], int.parse(lineList[1]), int.parse(lineList[2])));
     }
-    if (monsters.length != 3) throw FormatException('Invalid monsters data');
+
     return monsters;
   } catch (e) {
     print('몬스터 데이터를 불러오는 데 실패했습니다: $e');
