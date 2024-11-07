@@ -24,7 +24,13 @@ class Game {
         throw Exception("캐릭터를 찾을 수 없습니다.");
       }
 
+      double random = Random().nextDouble();
+
       print("\n게임을 시작합니다!");
+      if (random <= 0.3) {
+        character?.hp = character!.hp + 10;
+        print("보너스 체력을 얻었습니다! 현재 체력: ${character?.hp}");
+      }
       print(
           "${character?.name} - 체력: ${character?.hp}, 공격력: ${character?.attack}, 방어력: ${character?.defense}");
     } catch (e) {
