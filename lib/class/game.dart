@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:dart_rpg/helper/load_character_stats.dart';
 import 'package:dart_rpg/helper/load_monster_list.dart';
+import 'package:dart_rpg/helper/load_result_data.dart';
 import 'package:dart_rpg/util/check_regex.dart';
 import 'package:dart_rpg/util/check_save.dart';
 
@@ -17,7 +18,10 @@ class Game {
 
   Future<void> startGame() async {
     try {
-      String name = getCharacterName();
+      String? name = await getCharacterName();
+      if (name == null) {
+        throw Exception("올바른 이름이 입력되지 않았습니다.");
+      }
       character = await loadCharacterStatsAsync(name);
       monsterList = await loadMonsterListAsync();
 
@@ -36,6 +40,7 @@ class Game {
           "${character?.name} - 체력: ${character?.hp}, 공격력: ${character?.attack}, 방어력: ${character?.defense}");
     } catch (e) {
       print(e.toString().substring(11));
+      return;
     }
   }
 
@@ -160,15 +165,43 @@ class Game {
     return randomMonster;
   }
 
-  String getCharacterName() {
-    print("캐릭터의 이름을 입력하세요 : ");
+  Future<String?> getCharacterName() async {
+    print("플레이할 이름을 선택해주세요.");
+    print("1. 새로운 이름으로 플레이하기");
+    print("2. 기존에 진행한 이름으로 플레이하기");
+    try {
+      switch (stdin.readLineSync() as String) {
+        case "1":
+          print("캐릭터의 이름을 입력하세요 : ");
 
-    String name = stdin.readLineSync() as String;
+          String name = stdin.readLineSync() as String;
 
-    while (!checkRegex(name)) {
-      print("한글과 영문만 입력 가능합니다. 다시 입력해주세요!");
-      name = stdin.readLineSync() as String;
+          while (!checkRegex(name)) {
+            print("한글과 영문만 입력 가능합니다. 다시 입력해주세요!");
+            name = stdin.readLineSync() as String;
+          }
+          return name;
+
+        case "2":
+          print("기존에 진행했던 이름 목록입니다.");
+          List<List<dynamic>>? resultData = await loadResultData();
+          // null일때 처리 추가할 필요 있지만, 현재는 데이터가 있어 향후 리팩토링 계획
+          for (int i = 0; i < resultData!.length; i++) {
+            print(
+                "${i + 1}. ${resultData[i][0]} / hp : ${resultData[i][1]} / 승리 여부 : ${resultData[i][2]}");
+          }
+          int idx = int.parse(stdin.readLineSync() as String);
+          if (idx > resultData.length) {
+            throw Exception("잘못된 선택입니다. 게임을 다시 시작해 주세요.");
+          }
+          return resultData.toList()[idx - 1][0];
+
+        default:
+          throw Exception("잘못된 선택입니다. 게임을 다시 시작해 주세요.");
+      }
+    } catch (e) {
+      print(e.toString().substring(11));
+      return null;
     }
-    return name;
   }
 }
