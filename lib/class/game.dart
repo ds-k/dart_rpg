@@ -6,20 +6,23 @@ import 'dart:io';
 
 import 'package:dart_rpg/helper/load_character_stats.dart';
 import 'package:dart_rpg/helper/load_monster_list.dart';
+import 'package:dart_rpg/util/check_regex.dart';
 
 class Game {
   Character? character;
   List<Monster>? monsterList;
-  int? monsterKillCount;
+  int monsterKillCount = 0;
 
   Future<void> startGame() async {
     try {
       String name = getCharacterName();
       character = await loadCharacterStatsAsync(name);
+      monsterList = await loadMonsterListAsync();
 
       if (character == null) {
         throw Exception("캐릭터를 찾을 수 없습니다.");
       }
+
       print("\n게임을 시작합니다!");
       print(
           "${character?.name} - 체력: ${character?.hp}, 공격력: ${character?.attack}, 방어력: ${character?.defense}");
@@ -28,29 +31,86 @@ class Game {
     }
   }
 
-  void battle() {
-    print("battle!");
+  void battle() async {
+    Monster randomMonster = await getRandomMonster();
+    // 캐릭터의 체력이 0 이하가 되면 게임이 종료
+    print("\n새로운 몬스터가 나타났습니다!");
+    print(
+        "${randomMonster.name} - 체력: ${randomMonster.hp}, 공격력: ${randomMonster.attack}");
+    while (character!.hp > 0) {
+      // 캐릭터의 행동
+      print("\n${character!.name}의 턴");
+      print("행동을 선택하세요 (1: 공격, 2: 방어)");
+
+      switch (stdin.readLineSync() as String) {
+        case "1":
+          character!.attackMonster(randomMonster);
+          // 몬스터 체력이 0 이하
+          if (randomMonster.hp <= 0) {
+            print("${randomMonster.name}을 물리쳤습니다!");
+            monsterKillCount += 1;
+            print("\n다음 몬스터와 싸우시겠습니까?");
+            switch (stdin.readLineSync() as String) {
+              case "y":
+              case "Y":
+                monsterList!.remove(randomMonster);
+                print(monsterList);
+                battle();
+                return;
+              case "n":
+              case "N":
+                print("게임을 종료합니다. 도중에 종료한 게임은 저장되지 않습니다.");
+                return;
+            }
+            break;
+          }
+        case "2":
+          character!.defend(randomMonster);
+          break;
+      }
+      // 몬스터의 행동
+      print("\n${randomMonster.name}의 턴");
+      randomMonster.attackCharacter(character!);
+
+      if (character!.hp <= 0) {
+        return;
+      }
+
+      character!.showStatus();
+      randomMonster.showStatus();
+    }
+
+    // 캐릭터 죽음
+    print("\n${character!.name}이 죽었습니다. 다음에 다시 도전해 주세요.");
+    return;
   }
 
-  Future<void> getRandomMonster() async {
-    monsterList = await loadMonsterListAsync();
+  Future<Monster> getRandomMonster() async {
     Random random = Random();
     int randomIdx = random.nextInt(monsterList!.length);
 
     Monster randomMonster = monsterList![randomIdx];
 
-    print("\n새로운 몬스터가 나타났습니다!");
-    print(
-        "${randomMonster.name} - 체력: ${randomMonster.hp}, 공격력: ${randomMonster.attack}");
+    int min = character?.defense ?? 1;
+    int max = randomMonster.attack;
+
+    randomMonster.attack = random.nextInt(max - min) + min;
+
+    return randomMonster;
   }
 
   String getCharacterName() {
     print("캐릭터의 이름을 입력하세요 : ");
+
     String name = stdin.readLineSync() as String;
+
+    while (!checkRegex(name)) {
+      print("한글과 영문만 입력 가능합니다. 다시 입력해주세요!");
+      name = stdin.readLineSync() as String;
+    }
     return name;
   }
 }
-
 
 /*
 - **속성(Property)**
