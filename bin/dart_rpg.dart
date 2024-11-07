@@ -4,5 +4,5 @@ void main(List<String> arguments) async {
   Game game = Game();
 
   await game.startGame();
-  await game.getRandomMonster();
+  game.battle();
 }
