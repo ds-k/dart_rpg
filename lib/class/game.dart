@@ -13,6 +13,7 @@ class Game {
   Character? character;
   List<Monster>? monsterList;
   int monsterKillCount = 0;
+  int gameCount = 0;
 
   Future<void> startGame() async {
     try {
@@ -123,6 +124,13 @@ class Game {
         return;
       }
       // 몬스터의 턴
+      gameCount += 1;
+      if (gameCount == 3) {
+        randomMonster.defense += 2;
+        print(
+            "${randomMonster.name}의 방어력이 증가했습니다! 현재 방어력 ${randomMonster.defense}");
+        gameCount = 0;
+      }
       print("\n${randomMonster.name}의 턴");
       randomMonster.attackCharacter(character!);
 

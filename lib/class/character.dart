@@ -18,15 +18,18 @@ class Character {
       attack = attack ~/ 2; // 사용한 이후라 공격력 복구 (나누고 내림해서 정수만 하는 연산자 사용)
       skillFlag += 1; // 더이상 공격력 연산이 없게끔 복구 이후에 더해주기
     }
-    monster.hp = monster.hp - attack;
-    print("\n$name이(가) ${monster.name}에게 $attack의 데미지를 입혔습니다.");
+
+    int damage = attack - monster.defense; // 몬스터 턴별 방어력 증가로 인해 추가된 로직;
+    if (damage < 0) damage = 1; // 몬스터의 방어력의 한계를 두어야 게임 진행이 가능하다.
+    monster.hp = monster.hp - damage;
+    print("\n$name이(가) ${monster.name}에게 $damage의 데미지를 입혔습니다.");
   }
 
   void defend(Monster monster) {
     // 몬스터의 공격력에서 캐릭터의 방어력을 뺀만큼 회복
     int healVal = monster.attack - defense;
     hp += healVal;
-    print("$name이(가) 방어 태세를 취하여 $healVal 만큼 체력을 얻었습니다.");
+    print("\n$name이(가) 방어 태세를 취하여 $healVal 만큼 체력을 얻었습니다.");
   }
 
   void showStatus() {
